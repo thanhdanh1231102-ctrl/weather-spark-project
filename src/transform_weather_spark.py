@@ -93,8 +93,6 @@ def transform_weather(raw_file: Path) -> None:
                 col("hourly_data.relative_humidity_2m").alias("relative_humidity_2m"),
                 col("hourly_data.precipitation").alias("precipitation"),
                 col("hourly_data.wind_speed_10m").alias("wind_speed_10m"),
-                lit(raw_file.name).alias("source_file"),
-                lit(ingestion_date).alias("ingestion_date"),
             )
         )
 
@@ -115,8 +113,6 @@ def transform_weather(raw_file: Path) -> None:
                 col("daily_data.temperature_2m_max").alias("temperature_2m_max"),
                 col("daily_data.temperature_2m_min").alias("temperature_2m_min"),
                 col("daily_data.precipitation_sum").alias("precipitation_sum"),
-                lit(raw_file.name).alias("source_file"),
-                lit(ingestion_date).alias("ingestion_date"),
             )
         )
 
