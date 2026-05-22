@@ -1,22 +1,22 @@
 # Weather Spark Project
 
-Project nhỏ dùng để thực hành quy trình ETL với Python và PySpark:
+A small project for practicing an ETL workflow with Python and PySpark:
 
-1. Lấy dữ liệu thời tiết từ Open-Meteo API.
-2. Lưu dữ liệu thô vào thư mục `data/raw`.
-3. Dùng PySpark để biến đổi dữ liệu.
-4. Xuất dữ liệu đã xử lý ra `data/processed`.
+1. Extract weather data from the Open-Meteo API.
+2. Save raw data into `data/raw`.
+3. Transform the raw data with PySpark.
+4. Write processed datasets into `data/processed`.
 
-Mặc định project đang lấy dữ liệu thời tiết của Thành phố Hồ Chí Minh.
+By default, this project collects weather data for Ho Chi Minh City, Vietnam.
 
-## Công nghệ sử dụng
+## Tech Stack
 
 - Python
 - PySpark
 - Open-Meteo API
 - Jupyter Notebook
 
-## Cấu trúc project
+## Project Structure
 
 ```text
 weather-spark-project/
@@ -33,68 +33,68 @@ weather-spark-project/
     └── processed/
 ```
 
-Trong đó:
+File and folder purpose:
 
-- `src/extract_weather_api.py`: gọi Open-Meteo API và lưu dữ liệu JSON thô.
-- `src/transform_weather_spark.py`: đọc file JSON mới nhất và biến đổi bằng PySpark.
-- `src/analyze_weather.py`: file dành cho bước phân tích dữ liệu sau khi transform.
-- `notebooks/analysis.ipynb`: notebook dùng để khám phá và phân tích dữ liệu.
-- `data/raw`: chứa dữ liệu thô lấy từ API.
-- `data/processed`: chứa dữ liệu đã xử lý.
+- `src/extract_weather_api.py`: calls the Open-Meteo API and saves raw JSON data.
+- `src/transform_weather_spark.py`: reads the latest raw JSON file and transforms it with PySpark.
+- `src/analyze_weather.py`: reserved for analysis logic after the transform step.
+- `notebooks/analysis.ipynb`: notebook for data exploration and analysis.
+- `data/raw`: stores raw data extracted from the API.
+- `data/processed`: stores transformed output datasets.
 
-Thư mục `data/` không được đưa lên GitHub vì đây là dữ liệu sinh ra trong quá trình chạy project.
+The `data/` directory is not committed to GitHub because it contains generated local data.
 
-## Cài đặt
+## Installation
 
-Clone project về máy:
+Clone the repository:
 
 ```bash
 git clone https://github.com/thanhdanh1231102-ctrl/weather-spark-project.git
 cd weather-spark-project
 ```
 
-Tạo môi trường ảo:
+Create a virtual environment:
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate
 ```
 
-Cài thư viện:
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Lưu ý: PySpark cần Java. Nếu máy chưa có Java, hãy cài JDK trước khi chạy script transform.
+Note: PySpark requires Java. Install a JDK before running the transform script if Java is not already available on your machine.
 
-## Cách chạy project
+## How to Run
 
-### 1. Lấy dữ liệu thời tiết từ API
+### 1. Extract weather data from the API
 
 ```bash
 python src/extract_weather_api.py
 ```
 
-Sau khi chạy, project sẽ tạo file JSON trong:
+After running the script, a JSON file will be created in:
 
 ```text
 data/raw/
 ```
 
-Ví dụ:
+Example:
 
 ```text
 data/raw/weather_2026_05_22.json
 ```
 
-### 2. Transform dữ liệu bằng PySpark
+### 2. Transform data with PySpark
 
 ```bash
 python src/transform_weather_spark.py
 ```
 
-Script này sẽ đọc file `weather_*.json` mới nhất trong `data/raw` và tạo các dataset sau:
+This script reads the latest `weather_*.json` file from `data/raw` and creates these datasets:
 
 ```text
 data/processed/metadata/
@@ -102,17 +102,17 @@ data/processed/hourly/
 data/processed/daily/
 ```
 
-Các dataset được ghi theo ngày xử lý, ví dụ:
+Each dataset is written by ingestion date, for example:
 
 ```text
 data/processed/hourly/ingestion_date=2026_05_22/
 ```
 
-## Dữ liệu đầu ra
+## Output Data
 
 ### Metadata
 
-Chứa thông tin chung của request:
+General request metadata:
 
 - latitude
 - longitude
@@ -123,7 +123,7 @@ Chứa thông tin chung của request:
 
 ### Hourly
 
-Chứa dữ liệu thời tiết theo giờ:
+Hourly weather measurements:
 
 - time
 - weather_date
@@ -136,7 +136,7 @@ Chứa dữ liệu thời tiết theo giờ:
 
 ### Daily
 
-Chứa dữ liệu thời tiết theo ngày:
+Daily weather summary:
 
 - weather_date
 - temperature_2m_max
@@ -145,19 +145,19 @@ Chứa dữ liệu thời tiết theo ngày:
 - source_file
 - ingestion_date
 
-## Thay đổi thành phố
+## Change the City
 
-Mặc định file `src/extract_weather_api.py` đang dùng tọa độ Thành phố Hồ Chí Minh:
+By default, `src/extract_weather_api.py` uses the coordinates of Ho Chi Minh City:
 
 ```python
 weather_data = fetch_weather(latitude=10.8231, longitude=106.6297)
 ```
 
-Muốn lấy dữ liệu cho thành phố khác, thay `latitude` và `longitude` bằng tọa độ mới.
+To collect weather data for another city, replace `latitude` and `longitude` with the new coordinates.
 
-## Ghi chú về Git
+## Git Notes
 
-Project đã ignore dữ liệu trong `.gitignore`:
+Generated data is ignored in `.gitignore`:
 
 ```gitignore
 data/
@@ -166,13 +166,13 @@ data/
 *.parquet
 ```
 
-Vì vậy khi commit lên GitHub, chỉ source code và tài liệu được đưa lên. Dữ liệu trong `data/` vẫn nằm trên máy local nhưng không được upload.
+This keeps source code and documentation on GitHub while leaving local data files on your machine.
 
-Quy trình update project lên GitHub:
+Common workflow for updating the project on GitHub:
 
 ```bash
 git status
 git add .
-git commit -m "Mo ta thay doi"
+git commit -m "Describe your changes"
 git push
 ```
