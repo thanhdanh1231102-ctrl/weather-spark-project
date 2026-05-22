@@ -97,12 +97,12 @@ python src/transform_weather_spark.py
 This script reads the latest `weather_*.json` file from `data/raw` and creates these datasets:
 
 ```text
-data/processed/metadata/
+data/processed/locations/
 data/processed/hourly/
 data/processed/daily/
 ```
 
-Each dataset is written by ingestion date, for example:
+The `hourly` and `daily` datasets are written by ingestion date, for example:
 
 ```text
 data/processed/hourly/ingestion_date=2026_05_22/
@@ -110,21 +110,23 @@ data/processed/hourly/ingestion_date=2026_05_22/
 
 ## Output Data
 
-### Metadata
+### Locations
 
-General request metadata:
+Location data. This dataset is overwritten when the transform job runs because location attributes are mostly static:
 
+- location_id
+- city_name
 - latitude
 - longitude
 - timezone
+- timezone_abbreviation
 - elevation
-- source_file
-- ingestion_date
 
 ### Hourly
 
 Hourly weather measurements:
 
+- location_id
 - time
 - weather_date
 - temperature_2m
@@ -138,6 +140,7 @@ Hourly weather measurements:
 
 Daily weather summary:
 
+- location_id
 - weather_date
 - temperature_2m_max
 - temperature_2m_min
