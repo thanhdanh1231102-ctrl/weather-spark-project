@@ -6,6 +6,7 @@ A small project for practicing an ETL workflow with Python and PySpark:
 2. Save raw data into `data/raw`.
 3. Transform the raw data with PySpark.
 4. Write processed datasets into `data/processed`.
+5. Load the processed datasets into MySQL.
 
 By default, this project collects weather data for Ho Chi Minh City, Vietnam.
 
@@ -14,6 +15,7 @@ By default, this project collects weather data for Ho Chi Minh City, Vietnam.
 - Python
 - PySpark
 - Open-Meteo API
+- MySQL
 - Jupyter Notebook
 
 ## Project Structure
@@ -27,6 +29,7 @@ weather-spark-project/
 ├── src/
 │   ├── extract_weather_api.py
 │   ├── transform_weather_spark.py
+│   ├── load_weather_to_mysql.py
 │   └── analyze_weather.py
 └── data/
     ├── raw/
@@ -37,6 +40,7 @@ File and folder purpose:
 
 - `src/extract_weather_api.py`: calls the Open-Meteo API and saves raw JSON data.
 - `src/transform_weather_spark.py`: reads the latest raw JSON file and transforms it with PySpark.
+- `src/load_weather_to_mysql.py`: creates MySQL tables and loads the processed CSV datasets.
 - `src/analyze_weather.py`: reserved for analysis logic after the transform step.
 - `notebooks/analysis.ipynb`: notebook for data exploration and analysis.
 - `data/raw`: stores raw data extracted from the API.
@@ -67,6 +71,28 @@ pip install -r requirements.txt
 ```
 
 Note: PySpark requires Java. Install a JDK before running the transform script if Java is not already available on your machine.
+
+The MySQL load step requires a running MySQL server. The script uses these environment variables, with defaults if they are not set:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with your local MySQL credentials:
+
+```text
+MYSQL_HOST=127.0.0.1
+MYSQL_PORT=3306
+MYSQL_USER=root
+MYSQL_PASSWORD=your_password
+MYSQL_DATABASE=weather_db
+```
+
+If your local MySQL server uses a Unix socket instead of host and port, set `MYSQL_UNIX_SOCKET`:
+
+```text
+MYSQL_UNIX_SOCKET=/tmp/mysql.sock
+```
 
 ## How to Run
 
@@ -108,6 +134,22 @@ The `hourly` and `daily` datasets are written by ingestion date, for example:
 data/processed/hourly/ingestion_date=2026_05_22/
 ```
 
+### 3. Load processed data into MySQL
+
+```bash
+python src/load_weather_to_mysql.py
+```
+
+This script creates the database if it does not exist, creates the required tables, and loads the processed CSV files into MySQL.
+
+The script loads:
+
+- `data/processed/locations/`
+- the latest `data/processed/hourly/ingestion_date=*/`
+- the latest `data/processed/daily/ingestion_date=*/`
+
+Rows are inserted with upsert logic, so running the script again updates existing records with the same primary key instead of creating duplicates.
+
 ## Output Data
 
 ### Locations
@@ -118,6 +160,7 @@ Location data. This dataset is overwritten when the transform job runs because l
 - city_name
 - latitude
 - longitude
+- utc_offset_seconds
 - timezone
 - timezone_abbreviation
 - elevation
@@ -144,6 +187,20 @@ Daily weather summary:
 - temperature_2m_max
 - temperature_2m_min
 - precipitation_sum
+
+## MySQL Tables
+
+The MySQL load script creates three tables:
+
+- `locations`: one row per configured location.
+- `hourly_weather`: hourly weather measurements, keyed by `location_id` and `time`.
+- `daily_weather`: daily weather summaries, keyed by `location_id` and `weather_date`.
+
+Default database name:
+
+```text
+weather_db
+```
 
 
 ## Change the City
