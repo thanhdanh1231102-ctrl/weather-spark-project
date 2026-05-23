@@ -88,12 +88,6 @@ MYSQL_PASSWORD=your_password
 MYSQL_DATABASE=weather_db
 ```
 
-If your local MySQL server uses a Unix socket instead of host and port, set `MYSQL_UNIX_SOCKET`:
-
-```text
-MYSQL_UNIX_SOCKET=/tmp/mysql.sock
-```
-
 ## How to Run
 
 ### 1. Extract weather data from the API
