@@ -133,8 +133,7 @@ Hourly weather measurements:
 - relative_humidity_2m
 - precipitation
 - wind_speed_10m
-- source_file
-- ingestion_date
+
 
 ### Daily
 
@@ -145,8 +144,7 @@ Daily weather summary:
 - temperature_2m_max
 - temperature_2m_min
 - precipitation_sum
-- source_file
-- ingestion_date
+
 
 ## Change the City
 
