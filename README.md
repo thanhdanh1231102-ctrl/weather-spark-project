@@ -6,7 +6,7 @@ A small project for practicing an ETL workflow with Python and PySpark:
 2. Save raw data into `data/raw`.
 3. Transform the raw data with PySpark.
 4. Write processed datasets into `data/processed`.
-5. Load the processed datasets into MySQL.
+5. Optionally load the processed datasets into MySQL.
 
 By default, this project collects weather data for Ho Chi Minh City, Vietnam.
 
@@ -16,7 +16,6 @@ By default, this project collects weather data for Ho Chi Minh City, Vietnam.
 - PySpark
 - Open-Meteo API
 - MySQL
-- Jupyter Notebook
 
 ## Project Structure
 
@@ -24,13 +23,10 @@ By default, this project collects weather data for Ho Chi Minh City, Vietnam.
 weather-spark-project/
 ├── README.md
 ├── requirements.txt
-├── notebooks/
-│   └── analysis.ipynb
 ├── src/
 │   ├── extract_weather_api.py
 │   ├── transform_weather_spark.py
-│   ├── load_weather_to_mysql.py
-│   └── analyze_weather.py
+│   └── load_weather_to_mysql.py
 └── data/
     ├── raw/
     └── processed/
@@ -41,8 +37,6 @@ File and folder purpose:
 - `src/extract_weather_api.py`: calls the Open-Meteo API and saves raw JSON data.
 - `src/transform_weather_spark.py`: reads the latest raw JSON file and transforms it with PySpark.
 - `src/load_weather_to_mysql.py`: creates MySQL tables and loads the processed CSV datasets.
-- `src/analyze_weather.py`: reserved for analysis logic after the transform step.
-- `notebooks/analysis.ipynb`: notebook for data exploration and analysis.
 - `data/raw`: stores raw data extracted from the API.
 - `data/processed`: stores transformed output datasets.
 
@@ -72,7 +66,7 @@ pip install -r requirements.txt
 
 Note: PySpark requires Java. Install a JDK before running the transform script if Java is not already available on your machine.
 
-The MySQL load step requires a running MySQL server. The script uses these environment variables, with defaults if they are not set:
+The MySQL load step is optional. It requires a running MySQL server only if you want to store the processed data in a database. The script uses these environment variables, with defaults if they are not set:
 
 ```bash
 cp .env.example .env
@@ -128,7 +122,9 @@ The `hourly` and `daily` datasets are written by ingestion date, for example:
 data/processed/hourly/ingestion_date=2026_05_22/
 ```
 
-### 3. Load processed data into MySQL
+### 3. Optional: Load processed data into MySQL
+
+You can skip this step if you only want to generate local processed CSV files.
 
 ```bash
 python src/load_weather_to_mysql.py
@@ -171,7 +167,6 @@ Hourly weather measurements:
 - precipitation
 - wind_speed_10m
 
-
 ### Daily
 
 Daily weather summary:
@@ -196,7 +191,6 @@ Default database name:
 weather_db
 ```
 
-
 ## Change the City
 
 By default, `src/extract_weather_api.py` uses the coordinates of Ho Chi Minh City:
@@ -214,8 +208,13 @@ Generated data is ignored in `.gitignore`:
 ```gitignore
 data/
 *.csv
+*.tsv
 *.json
+*.jsonl
 *.parquet
+*.orc
+*.avro
+*.delta/
 ```
 
 This keeps source code and documentation on GitHub while leaving local data files on your machine.
